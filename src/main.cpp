@@ -8,7 +8,8 @@ int main()
     cout<<"Username:";
     getline(cin,username);
     cout<<"Password:";
-    password=login.password();
+    //password =login.password(); // fix later
+    std::cin>>password;
     string accessType=login.authenticate(username,password);
     
     if(accessType=="ADMINISTRATOR")
@@ -22,8 +23,20 @@ int main()
     else if(accessType=="PATIENT")
     {
         cout<<"Welcome "<<username<<endl;
+        cout<<"Press 1 for booking";
+        cout<<"Press 2 view booking";
+        
+        int t;
+        cin>>i;
+        {
+            cout<<"enter doc id";
+            cin>>" "
+        }
+        
     }
-    else
+    else{
         cout<<accessType;
+    }
+        
     return 0;
 }
