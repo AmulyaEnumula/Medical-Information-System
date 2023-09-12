@@ -6,9 +6,9 @@ int main()
     string username,password;
     cout<<"Enter Login credentials:-\n";
     cout<<"Username:";
-    cin>>username;
+    getline(cin,username);
     cout<<"Password:";
-    cin>>password;
+    password=login.password();
     string accessType=login.authenticate(username,password);
     
     if(accessType=="ADMINISTRATOR")
