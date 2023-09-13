@@ -2,12 +2,7 @@
 #include<sstream>
 #include<iostream>
 using namespace std;
-char _getch()
-{
-    char c;
-    std::cin>>c;
-    return c;
-}
+
 class Login
 {
     public:
@@ -15,8 +10,37 @@ class Login
     
     string HashPassword(string &password)
     {
-
-        return password;
+        int len=password.length();
+        string hashedPassword=password;
+        int j=0;
+        for(int i=0;i<len;i++)
+        {
+            if(isalpha(password[i]))
+            {
+                if(isupper(password[i]))
+                {
+                    hashedPassword[j]=tolower(password[i]);
+                    j++;
+                }
+                else
+                {
+                    hashedPassword[j]=toupper(password[i]);
+                    j++;
+                }
+            }
+            else if(isdigit(password[i]))
+            {
+                hashedPassword[j]=password[i]+9;
+                j++;
+            }
+            else
+            {
+                hashedPassword[j]='~';
+                j++;
+            }
+        }
+        //cout<<hashedPassword;
+        return hashedPassword;
     }
     string authenticate(string &username,string &password)
     {
@@ -33,7 +57,7 @@ class Login
                 getline(s,accessLevel,',');
                 if(username==name)
                 {
-                    string hashedPassword= password ; //HashPassword(password);
+                    string hashedPassword=HashPassword(password);
                     if(hashedPassword==pwd)
                         return accessLevel;
                     else 

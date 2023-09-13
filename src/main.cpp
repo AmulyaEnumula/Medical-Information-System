@@ -1,4 +1,7 @@
 #include "../headers/Authentication.hpp"
+#include "../headers/Menu.hpp"
+#include "../headers/AppointmentScheduling.hpp"
+#include<algorithm>
 
 int main()
 {
@@ -8,10 +11,9 @@ int main()
     cout<<"Username:";
     getline(cin,username);
     cout<<"Password:";
-    //password =login.password(); // fix later
-    std::cin>>password;
+    cin>>password;
     string accessType=login.authenticate(username,password);
-    
+    transform(username.begin(),username.end(),username.begin(),::toupper);
     if(accessType=="ADMINISTRATOR")
     {
         cout<<"Welcome "<<username<<endl;
@@ -23,20 +25,26 @@ int main()
     else if(accessType=="PATIENT")
     {
         cout<<"Welcome "<<username<<endl;
-        cout<<"Press 1 for booking";
-        cout<<"Press 2 view booking";
-        
-        int t;
-        cin>>i;
+        patient_Menu();
+        Appointment appointment;
+        cout<<"Input your choice:";
+        int choice;
+        cin>>choice;
+        switch(choice)
         {
-            cout<<"enter doc id";
-            cin>>" "
+            case 1: appointment.bookingAppointment();
+                    break;
+            case 2: appointment.viewAppointment();
+                    break;
+            case 3: cout<<"Logging out...\nLogout Successful!!!\n";
+                    break;
+            default: 
+                    cout<<"Enter option from drop down Menu\n";
         }
-        
     }
-    else{
+    else
+    {
         cout<<accessType;
     }
-        
     return 0;
 }
