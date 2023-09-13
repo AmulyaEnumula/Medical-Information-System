@@ -1,24 +1,27 @@
 #include<iostream>
+#include<limits>
 #include<fstream>
 #include<sstream>
 #include<vector>
 #include<string>
 using namespace std;
 
+void displayDoctorInfo();
+fstream file;
 class Information
 {
     public:
-    string date,dID,pID,status;
-    Information(string date,string dID,string pID,string status="pending"):
-    date(date),dID(dID),pID(pID),status(status){}
+    string date,dName,pName,status;
+    Information(string date,string dName,string pName,string status="pending"):
+    date(date),dName(dName),pName(pName),status(status){}
 };
 class Appointment
 {
-    string date,dID,pID,status;
+    string date,dName,pName,status;
     public:
-    void bookingAppointment();
+    void bookingAppointment(string &username);
     void reviewAppointment();
-    void viewAppointment();
+    void viewAppointment(string &username);
     void displayAppointments();
     void loadAppointmentDetails();
     void storeAppointmentDetails();
@@ -33,54 +36,55 @@ class Appointment
         storeAppointmentDetails();
     }    
 };
-void Appointment::bookingAppointment() // make sure no repeat Appointment
+void Appointment::bookingAppointment(string &username)
 {
-    cout<<"Enter appointment date:";
+    displayDoctorInfo();
+    cout<<"\nEnter appointment date:";
     cin>>date;
-    cout<<"Enter doctor ID:";
-    cin>>dID;
-    cout<<"Enter patient ID:";
-    cin>>pID;
-    Information info(date,dID,pID);
+    cout<<"Enter doctor name:";
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    getline(cin,dName);
+    Information info(date,dName,username);
     appointmentDetails.push_back(info);
 }
-void Appointment::reviewAppointment()  // make sure dr. can accept or reject
+void Appointment::reviewAppointment()
 {
     displayAppointments();
-    string id;
-    cout<<"Enter the patient ID to schedule the appointment:";
-    cin>>id;
+    string name;
+    cout<<"Enter the patient name to schedule the appointment:";
+    getline(cin,name);
     vector<Information>::iterator itr;
     for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
     {
-        if(itr->pID==id)
+        if(itr->pName==name)
         {
-            itr->status=1;
+            itr->status="scheduled";
         }
     }
 }
-void Appointment::viewAppointment()
+void Appointment::viewAppointment(string &username)
 {
-    string id;
-    cout<<"Enter the patient ID:";
-    cin>>id;
+    // string id;
+    // cout<<"Enter the patient ID:";
+    // cin>>id;
     vector<Information>::iterator itr;
     for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
     {
-        if(itr->pID==id)
+        if(itr->pName==username)
         {
-            cout<<itr->date<<" "<<itr->dID<<" "<<itr->pID<<" "<<itr->status<<"\n";
+            cout<<itr->date<<" "<<itr->dName<<" "<<itr->pName<<" "<<itr->status<<"\n";
         }
     }
 }
 void Appointment::displayAppointments()
 {
+    cout<<"Requested Appointments details:-\n";
     vector<Information>::iterator itr;
     for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
     {
         if(itr->status=="pending")
         {
-            cout<<itr->date<<" "<<itr->dID<<" "<<itr->pID<<" "<<itr->status<<"\n";
+            cout<<itr->date<<" "<<itr->dName<<" "<<itr->pName<<" "<<itr->status<<"\n";
         }
     }
 }
@@ -94,11 +98,11 @@ void Appointment::loadAppointmentDetails()
         {
             stringstream ss(line);
             getline(ss,date,',');
-            getline(ss,dID,',');
-            getline(ss,pID,',');
+            getline(ss,dName,',');
+            getline(ss,pName,',');
             getline(ss,status,',');
-            Information i(date,dID,pID,status);
-            appointmentDetails.push_back(i);
+            Information info(date,dName,pName,status);
+            appointmentDetails.push_back(info);
         }
         appFile.close();
     }
@@ -113,9 +117,29 @@ void Appointment::storeAppointmentDetails()
         vector<Information>::iterator itr;
         for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
         {
-            appFile<<itr->date<<","<<itr->dID<<","<<itr->pID<<","<<itr->status<<"\n";
+            appFile<<itr->date<<","<<itr->dName<<","<<itr->pName<<","<<itr->status<<"\n";
         }
         appFile.close();
+    }
+    else
+        cout<<"File opening failed\n";
+}
+void displayDoctorInfo()
+{
+    cout<<"Here is the doctor information for your reference:-\n";
+    string name,specialization;
+    file.open("../data/DoctorInfo.csv",ios::in);
+    if(file.is_open())
+    {
+        string line;
+        while(getline(file,line))
+        {
+            stringstream ss(line);
+            getline(ss,name,',');
+            getline(ss,specialization,',');
+            cout<<name<<" - "<<specialization<<"\n";
+        }
+        file.close();
     }
     else
         cout<<"File opening failed\n";

@@ -24,7 +24,7 @@ int main()
     }
     else if(accessType=="PATIENT")
     {
-        cout<<"Welcome "<<username<<endl;
+        cout<<"\t\t*** Welcome "<<username<<" ***"<<endl;
         patient_Menu();
         Appointment appointment;
         cout<<"Input your choice:";
@@ -32,9 +32,9 @@ int main()
         cin>>choice;
         switch(choice)
         {
-            case 1: appointment.bookingAppointment();
+            case 1: appointment.bookingAppointment(username);
                     break;
-            case 2: appointment.viewAppointment();
+            case 2: appointment.viewAppointment(username);
                     break;
             case 3: cout<<"Logging out...\nLogout Successful!!!\n";
                     break;
