@@ -1,18 +1,18 @@
-#include<iostream>
+#include "../headers/Validation.hpp"
 #include<limits>
-#include<fstream>
-#include<sstream>
+// #include<fstream>
+// #include<sstream>
 #include<vector>
 #include<string>
-using namespace std;
 
 void displayDoctorInfo();
+string selectDate();
 fstream file;
-class Information
+class AppointmentDetails
 {
     public:
     string date,dName,pName,status;
-    Information(string date,string dName,string pName,string status="pending"):
+    AppointmentDetails(string date,string dName,string pName,string status="pending"):
     date(date),dName(dName),pName(pName),status(status){}
 };
 class Appointment
@@ -20,12 +20,12 @@ class Appointment
     string date,dName,pName,status;
     public:
     void bookingAppointment(string &username);
-    void reviewAppointment();
+    void scheduleAppointment();
     void viewAppointment(string &username);
-    void displayAppointments();
+    bool displayRequestedAppointments();
     void loadAppointmentDetails();
     void storeAppointmentDetails();
-    vector<Information> appointmentDetails;
+    vector<AppointmentDetails> appointmentDetails;
     fstream appFile;
     Appointment()
     {
@@ -38,28 +38,53 @@ class Appointment
 };
 void Appointment::bookingAppointment(string &username)
 {
+    vector<AppointmentDetails>::iterator itr;
+    for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
+    {
+        if(itr->pName==username)
+        {
+            cout<<"You have already booked\n";
+            return;
+        }
+    }
     displayDoctorInfo();
-    cout<<"\nEnter appointment date:";
-    cin>>date;
+    cout<<"Enter appointment date:";
+    date=selectDate();
     cout<<"Enter doctor name:";
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     getline(cin,dName);
-    Information info(date,dName,username);
-    appointmentDetails.push_back(info);
-}
-void Appointment::reviewAppointment()
-{
-    displayAppointments();
-    string name;
-    cout<<"Enter the patient name to schedule the appointment:";
-    getline(cin,name);
-    vector<Information>::iterator itr;
-    for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
+    if(is_Valid_Doctor(dName))
     {
-        if(itr->pName==name)
+        AppointmentDetails details(date,dName,username);
+        appointmentDetails.push_back(details);
+        cout<<"Appointment booking is successful!!!\n";
+    }
+    else
+    {
+        cout<<"Doctor not found\n";
+    }
+}
+void Appointment::scheduleAppointment()
+{
+    if(displayRequestedAppointments())
+    {
+        string name;
+        cout<<"Enter the patient name to schedule the appointment:";
+        getline(cin,name);
+        vector<AppointmentDetails>::iterator itr;
+        for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
         {
-            itr->status="scheduled";
+            if(itr->pName==name)
+            {
+                itr->status="scheduled";
+                return;
+            }
         }
+        cout<<"Patient not found\n";
+    }
+    else
+    {
+        return;
     }
 }
 void Appointment::viewAppointment(string &username)
@@ -67,19 +92,30 @@ void Appointment::viewAppointment(string &username)
     // string id;
     // cout<<"Enter the patient ID:";
     // cin>>id;
-    vector<Information>::iterator itr;
+    int i=0;
+    vector<AppointmentDetails>::iterator itr;
     for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
     {
         if(itr->pName==username)
         {
+            i=1;
             cout<<itr->date<<" "<<itr->dName<<" "<<itr->pName<<" "<<itr->status<<"\n";
         }
     }
+    if(i==0)
+    {
+        cout<<"No Appointments found...Kindly book an Appointment\n";
+    }
 }
-void Appointment::displayAppointments()
+bool Appointment::displayRequestedAppointments()
 {
+    if(appointmentDetails.empty())
+    {
+        cout<<"No pending Appointments\n";
+        return false;
+    }
     cout<<"Requested Appointments details:-\n";
-    vector<Information>::iterator itr;
+    vector<AppointmentDetails>::iterator itr;
     for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
     {
         if(itr->status=="pending")
@@ -87,6 +123,7 @@ void Appointment::displayAppointments()
             cout<<itr->date<<" "<<itr->dName<<" "<<itr->pName<<" "<<itr->status<<"\n";
         }
     }
+    return true;
 }
 void Appointment::loadAppointmentDetails()
 {
@@ -101,8 +138,8 @@ void Appointment::loadAppointmentDetails()
             getline(ss,dName,',');
             getline(ss,pName,',');
             getline(ss,status,',');
-            Information info(date,dName,pName,status);
-            appointmentDetails.push_back(info);
+            AppointmentDetails details(date,dName,pName,status);
+            appointmentDetails.push_back(details);
         }
         appFile.close();
     }
@@ -114,7 +151,7 @@ void Appointment::storeAppointmentDetails()
     appFile.open("../data/Appointments.csv",ios::out);
     if(appFile.is_open())
     {
-        vector<Information>::iterator itr;
+        vector<AppointmentDetails>::iterator itr;
         for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
         {
             appFile<<itr->date<<","<<itr->dName<<","<<itr->pName<<","<<itr->status<<"\n";
@@ -143,4 +180,18 @@ void displayDoctorInfo()
     }
     else
         cout<<"File opening failed\n";
+    cout<<"\n";
+}
+string selectDate()
+{
+    string Date;
+    cout<<"(Note: Enter date in DD-MM-YYYY format)\n";
+    // validates the date and asks re-input if date is not in DD-MM-YYYY format
+    input:
+        cin>>Date;
+        if(!is_Valid_Date(Date))
+        {
+            goto input;
+        }
+    return Date;
 }
