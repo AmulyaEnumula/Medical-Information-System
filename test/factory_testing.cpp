@@ -1,9 +1,9 @@
 #include<iostream>
-#include "../headers/factory/factory.hpp"
-#include "../headers/factory/user.hpp"
+#include "../headers/Factory.hpp"
 int main()
 {
     User *ptr =  userType("ADMINISTRATOR");
-    ptr->whoAmI();
+    string name="admin";
+    ptr->home(name);
     return 0;
 }

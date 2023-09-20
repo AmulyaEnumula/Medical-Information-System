@@ -1,63 +1,67 @@
+#include "../headers/Factory.hpp"
 #include "../headers/Authentication.hpp"
-#include "../headers/Menu.hpp"
-#include "../headers/AppointmentScheduling.hpp"
-#include<algorithm>
 
 int main()
 {
-    Login login;
-    string username,password,capitalName;
-    std::cout<<"Enter 0 for EXIT\n";
-    std::cout<<"Enter 1 for Log In\n";
-    std::cout<<"Enter 2 for Sign Up\n";
-    
-    int x;
-    cin>>x;
-    do{
-        cout<<"Enter Login credentials:-\n";
-        cout<<"Username:";
-        cin.ignore();
-        getline(cin,username);
-        cout<<"Password:";
-        cin>>password;
-        string accessType=login.authenticate(username,password);
-        transform(username.begin(),username.end(),capitalName.begin(),::toupper);
-        if(accessType=="ADMINISTRATOR")
+    Login login_obj;
+    Signup signup_obj;
+    string username,password,accessType;
+    int option;
+    do
+    {
+        entry_Menu();
+        cout<<"Enter your option:";
+        try
         {
-            cout<<"Welcome "<<capitalName<<endl;
-        }
-        else if(accessType=="DOCTOR")
-        {
-            cout<<"Welcome "<<capitalName<<endl;
-        }
-        else if(accessType=="PATIENT")
-        {
-            cout<<"\t\t*** Welcome "<<capitalName<<" ***"<<endl;
-            patient_Menu();
-            Appointment appointment;
-            int choice;
-            do
+            cin>>option;
+            switch(option)
             {
-                cout<<"Input your choice:";
-                cin>>choice;
-                switch(choice)
-                {
-                    case 1: appointment.bookingAppointment(username);
-                            break;
-                    case 2: appointment.viewAppointment(username);
-                            break;
-                    case 3: cout<<"Logging out...\nLogout Successful!!!\n";
-                            break;
-                    default: 
-                            cout<<"Enter option from drop down Menu\n";
-                }
-            }while(choice!=3);
+                case 1: {
+                        cout<<"Enter Login credentials:-\n";
+                        cout<<"Username:";
+                        cin.ignore();
+                        getline(cin,username);
+                        cout<<"Password:";
+                        cin>>password;
+                        accessType=login_obj.authenticate(username,password);
+                        User *user=userType(accessType);
+                        user->home(username);
+                        break;
+                        }
+
+                case 2: {
+                        cout<<"Enter Signup credentials:-\n";
+                        cout<<"Username:";
+                        cin.ignore();
+                        getline(cin,username);
+                        cout<<"Password:";
+                        cin>>password;
+                        accessType="PATIENT";
+                        if(!isFound(username))
+                        {
+                            signup_obj.signUp(username,password,accessType);
+                            cout<<"Signup Successful!!!\n";
+                        }
+                        else
+                        {
+                            cout<<"Username already exists...Choose a different one\n";
+                        }
+                        break;
+                        }
+
+                case 3: {
+                        exit(0);
+                        break;
+                        }
+
+                default: cout<<"Invalid option. Options are from 1-3\n";
+                         break;
+            }
         }
-        else
+        catch(std::exception &e)
         {
-            cout<<accessType;
+            cerr<<e.what()<<"\n";
         }
-    }while(x!=0);
-    
+    }while(option!=3);
     return 0;
 }

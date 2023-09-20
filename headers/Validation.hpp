@@ -91,4 +91,26 @@ bool is_Valid_Doctor(string &dName)
     }
     return false;
 }
+bool isFound(string &username)
+{
+    ifstream file("../data/login.csv");
+    if(file.is_open())
+    {
+        string line;
+        while(getline(file,line))
+        {
+            string name;
+            stringstream s(line);
+            getline(s,name,',');
+            if(username==name)
+            return true;
+        }
+        file.close();
+    }
+    else
+    {
+        cout<<"File opening failed\n";
+    }
+    return false;
+}
 #endif

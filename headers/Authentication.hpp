@@ -1,54 +1,53 @@
 #include<fstream>
 #include<sstream>
 #include<iostream>
-using namespace std;
+using std::string;
+using std::cout;
 
-class Login
+string HashPassword(string &password)
 {
-    public:
-    fstream loginFile;
-    
-    string HashPassword(string &password)
+    int len=password.length();
+    string hashedPassword=password;
+    int j=0;
+    for(int i=0;i<len;i++)
     {
-        int len=password.length();
-        string hashedPassword=password;
-        int j=0;
-        for(int i=0;i<len;i++)
+        if(isalpha(password[i]))
         {
-            if(isalpha(password[i]))
+            if(isupper(password[i]))
             {
-                if(isupper(password[i]))
-                {
-                    hashedPassword[j]=tolower(password[i]);
-                    j++;
-                }
-                else
-                {
-                    hashedPassword[j]=toupper(password[i]);
-                    j++;
-                }
-            }
-            else if(isdigit(password[i]))
-            {
-                hashedPassword[j]=password[i]+9;
+                hashedPassword[j]=tolower(password[i]);
                 j++;
             }
             else
             {
-                hashedPassword[j]='~';
+                hashedPassword[j]=toupper(password[i]);
                 j++;
             }
         }
-        //cout<<hashedPassword;
-        return hashedPassword;
+        else if(isdigit(password[i]))
+        {
+            hashedPassword[j]=password[i]+9;
+            j++;
+        }
+        else
+        {
+            hashedPassword[j]='~';
+            j++;
+        }
     }
+    //cout<<hashedPassword;
+    return hashedPassword;
+}
+class Login
+{
+    public:
     string authenticate(string &username,string &password)
     {
-        loginFile.open("../data/login.csv");
-        if(loginFile.is_open())
+        ifstream file("../data/login.csv");
+        if(file.is_open())
         {
             string line;
-            while(getline(loginFile,line))
+            while(getline(file,line))
             {
                 string name,pwd,accessLevel;
                 stringstream s(line);
@@ -64,12 +63,30 @@ class Login
                         return "Invalid Password";
                 }
             }
-            loginFile.close();
+            file.close();
         }
         else
         {
             cout<<"File opening failed\n";
         }
         return "User Not Found";
+    }
+};
+class Signup
+{
+    public:
+    void signUp(string &username,string &password,string &accessLevel)
+    {
+        password=HashPassword(password);
+        ofstream file("../data/login.csv",ios::app);
+        if(file.is_open())
+        {
+            file<<username<<','<<password<<','<<accessLevel<<'\n';
+            file.close();
+        }
+        else
+        {
+            cout<<"File opening failed\n";
+        }
     }
 };

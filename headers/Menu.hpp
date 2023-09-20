@@ -1,5 +1,11 @@
 #include<iostream>
-using namespace std;
+using std::cout;
+void entry_Menu()
+{
+    cout<<"1. Log In\n";
+    cout<<"2. Sign Up\n";
+    cout<<"3. EXIT\n";
+}
 void patient_Menu()
 {
     cout<<"Here is what you can do-\n";
