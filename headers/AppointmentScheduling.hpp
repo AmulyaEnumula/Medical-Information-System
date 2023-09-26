@@ -11,18 +11,18 @@ fstream file;
 class AppointmentDetails
 {
     public:
-    string date,dName,pName,status;
-    AppointmentDetails(string date,string dName,string pName,string status="pending"):
-    date(date),dName(dName),pName(pName),status(status){}
+    string date,doctorId,patientId,status;
+    AppointmentDetails(string date,string doctorId,string patientId,string status="pending"):
+    date(date),doctorId(doctorId),patientId(patientId),status(status){}
 };
 class Appointment
 {
-    string date,dName,pName,status;
+    string date,dId,pId,status;
     public:
-    void bookingAppointment(string &username);
-    void scheduleAppointment();
-    void viewAppointment(string &username);
-    bool displayRequestedAppointments();
+    void bookingAppointment(string &userid);
+    void scheduleAppointment(string &);
+    void viewAppointment(string &userid);
+    bool displayRequestedAppointments(string &);
     void loadAppointmentDetails();
     void storeAppointmentDetails();
     vector<AppointmentDetails> appointmentDetails;
@@ -36,26 +36,26 @@ class Appointment
         storeAppointmentDetails();
     }    
 };
-void Appointment::bookingAppointment(string &username)
+void Appointment::bookingAppointment(string &userid)
 {
+    displayDoctorInfo();
+    cout<<"Enter appointment date:";
+    date=selectDate();
+    cout<<"Enter doctor ID:";
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    getline(cin,dId);
     vector<AppointmentDetails>::iterator itr;
     for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
     {
-        if(itr->pName==username)
+        if(itr->patientId==userid && itr->doctorId==dId)
         {
             cout<<"You have already booked\n";
             return;
         }
     }
-    displayDoctorInfo();
-    cout<<"Enter appointment date:";
-    date=selectDate();
-    cout<<"Enter doctor name:";
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    getline(cin,dName);
-    if(is_Valid_Doctor(dName))
+    if(is_Valid_Doctor(dId))
     {
-        AppointmentDetails details(date,dName,username);
+        AppointmentDetails details(date,dId,userid);
         appointmentDetails.push_back(details);
         cout<<"Appointment booking is successful!!!\n";
     }
@@ -64,19 +64,21 @@ void Appointment::bookingAppointment(string &username)
         cout<<"Doctor not found\n";
     }
 }
-void Appointment::scheduleAppointment()
+void Appointment::scheduleAppointment(string &userid)
 {
-    if(displayRequestedAppointments())
+    if(displayRequestedAppointments(userid))
     {
-        string name;
-        cout<<"Enter the patient name to schedule the appointment:";
-        getline(cin,name);
+        string id;
+        cout<<"Enter the patient ID to schedule the appointment:";
+        cin>>id;
         vector<AppointmentDetails>::iterator itr;
         for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
         {
-            if(itr->pName==name)
+            if(itr->doctorId==userid && itr->patientId==id)
             {
                 itr->status="scheduled";
+                storeAppointmentDetails();
+                cout<<"Scheduled successfully!!!\n";
                 return;
             }
         }
@@ -84,22 +86,20 @@ void Appointment::scheduleAppointment()
     }
     else
     {
+        cout<<"No requested Appointmenrs\n";
         return;
     }
 }
-void Appointment::viewAppointment(string &username)
+void Appointment::viewAppointment(string &userid)
 {
-    // string id;
-    // cout<<"Enter the patient ID:";
-    // cin>>id;
     int i=0;
     vector<AppointmentDetails>::iterator itr;
     for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
     {
-        if(itr->pName==username)
+        if(itr->patientId==userid)
         {
             i=1;
-            cout<<itr->date<<" "<<itr->dName<<" "<<itr->pName<<" "<<itr->status<<"\n";
+            cout<<itr->date<<" "<<itr->doctorId<<" "<<itr->patientId<<" "<<itr->status<<"\n";
         }
     }
     if(i==0)
@@ -107,7 +107,7 @@ void Appointment::viewAppointment(string &username)
         cout<<"No Appointments found...Kindly book an Appointment\n";
     }
 }
-bool Appointment::displayRequestedAppointments()
+bool Appointment::displayRequestedAppointments(string &userid)
 {
     if(appointmentDetails.empty())
     {
@@ -118,9 +118,12 @@ bool Appointment::displayRequestedAppointments()
     vector<AppointmentDetails>::iterator itr;
     for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
     {
-        if(itr->status=="pending")
+        if(itr->doctorId==userid)
         {
-            cout<<itr->date<<" "<<itr->dName<<" "<<itr->pName<<" "<<itr->status<<"\n";
+            if(itr->status=="pending")
+            {
+                cout<<itr->date<<" "<<itr->doctorId<<" "<<itr->patientId<<" "<<itr->status<<"\n";
+            }
         }
     }
     return true;
@@ -135,10 +138,10 @@ void Appointment::loadAppointmentDetails()
         {
             stringstream ss(line);
             getline(ss,date,',');
-            getline(ss,dName,',');
-            getline(ss,pName,',');
+            getline(ss,dId,',');
+            getline(ss,pId,',');
             getline(ss,status,',');
-            AppointmentDetails details(date,dName,pName,status);
+            AppointmentDetails details(date,dId,pId,status);
             appointmentDetails.push_back(details);
         }
         appFile.close();
@@ -154,7 +157,7 @@ void Appointment::storeAppointmentDetails()
         vector<AppointmentDetails>::iterator itr;
         for(itr=appointmentDetails.begin();itr!=appointmentDetails.end();itr++)
         {
-            appFile<<itr->date<<","<<itr->dName<<","<<itr->pName<<","<<itr->status<<"\n";
+            appFile<<itr->date<<","<<itr->doctorId<<","<<itr->patientId<<","<<itr->status<<"\n";
         }
         appFile.close();
     }
@@ -164,7 +167,7 @@ void Appointment::storeAppointmentDetails()
 void displayDoctorInfo()
 {
     cout<<"Here is the doctor information for your reference:-\n";
-    string name,specialization;
+    string doctorid,name,specialization;
     file.open("../data/DoctorInfo.csv",ios::in);
     if(file.is_open())
     {
@@ -172,9 +175,10 @@ void displayDoctorInfo()
         while(getline(file,line))
         {
             stringstream ss(line);
+            getline(ss,doctorid,',');
             getline(ss,name,',');
             getline(ss,specialization,',');
-            cout<<name<<" - "<<specialization<<"\n";
+            cout<<doctorid<<" - "<<name<<" - "<<specialization<<"\n";
         }
         file.close();
     }

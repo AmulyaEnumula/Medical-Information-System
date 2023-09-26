@@ -4,7 +4,19 @@
 #include<ctime>
 #include<fstream>
 #include<sstream>
+#include<regex>
 using namespace std;
+
+bool is_Valid_MobileNo(string &number)
+{
+    const regex pattern("[6-9][0-9]{9}");
+    if(regex_match(number,pattern))
+    {
+        return true;
+    }
+    cout<<"Phone number Invalid\n";
+    return false;
+}
 
 bool isleap(int year)
 {

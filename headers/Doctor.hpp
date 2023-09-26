@@ -1,4 +1,5 @@
 #include "../headers/User.hpp"
+#include "../headers/Menu.hpp"
 #include<iostream>
 using std::string;
 using std::cout;
@@ -9,7 +10,8 @@ class Doctor: public User
         void home(string &);
 };
 
-void Doctor::home(string &username)
+void Doctor::home(string &userid)
 {
-    cout<<"\t\t*** Welcome "<<username<<" ***"<<std::endl;
+    cout<<"\t\t*** Welcome "<<userid<<" ***"<<std::endl;
+    doctor_Menu();
 }

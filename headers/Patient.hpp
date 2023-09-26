@@ -11,9 +11,9 @@ class Patient:public User
     public:
     void home(string &);
 };
-void Patient::home(string &username)
+void Patient::home(string &userid)
 {
-    cout<<"\t\t*** Welcome "<<username<<" ***"<<std::endl;
+    cout<<"\t\t*** Welcome "<<userid<<" ***"<<std::endl;
     patient_Menu();
     Appointment appointment;
     int choice;
@@ -23,9 +23,9 @@ void Patient::home(string &username)
         cin>>choice;
         switch(choice)
         {
-            case 1: appointment.bookingAppointment(username);
+            case 1: appointment.bookingAppointment(userid);
                     break;
-            case 2: appointment.viewAppointment(username);
+            case 2: appointment.viewAppointment(userid);
                     break;
             case 3: cout<<"Logging out...\nLogout Successful!!!\n";
                     break;

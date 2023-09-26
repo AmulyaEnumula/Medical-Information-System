@@ -4,7 +4,7 @@
 class User
 {
    public:
-        virtual void home(std::string &username)=0;
+        virtual void home(std::string &userid)=0;
         virtual ~User(){}
 };
 
