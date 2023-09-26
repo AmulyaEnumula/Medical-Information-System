@@ -1,3 +1,5 @@
+#ifndef APPOINTMENTSCHEDULING_HPP
+#define APPOINTMENTSCHEDULING_HPP
 #include "../headers/Validation.hpp"
 #include<limits>
 // #include<fstream>
@@ -199,3 +201,4 @@ string selectDate()
         }
     return Date;
 }
+#endif

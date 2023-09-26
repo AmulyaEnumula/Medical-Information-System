@@ -21,13 +21,14 @@ int main()
             cout<<"\n";
             switch(option)
             {
-                case 1: {
+                case 1: {//block for login by using userID and password
                             cout<<"Enter Login credentials:-\n";
                             cout<<"User ID:";
                             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                             getline(cin,userid);
                             cout<<"Password:";
                             cin>>password;
+                            //fetching the user role from login file
                             accessType=login_obj.authenticate(userid,password);
                             User *user=userType(accessType);
                             if(user)
@@ -43,6 +44,7 @@ int main()
                         }
 
                 case 2: {
+                            //block for SignUp of Patients
                             cout<<"Enter Signup credentials:-\n";
                             cout<<"Username:";
                             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

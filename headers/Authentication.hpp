@@ -1,3 +1,5 @@
+#ifndef AUTHENTICATION_HPP
+#define AUTHENTICATION_HPP
 #include<fstream>
 #include<sstream>
 #include<iostream>
@@ -99,3 +101,4 @@ class Signup
         }
     }
 };
+#endif

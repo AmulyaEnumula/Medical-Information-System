@@ -1,3 +1,5 @@
+#ifndef PATIENT_HPP
+#define PATIENT_HPP
 #include "../headers/User.hpp"
 #include "../headers/AppointmentScheduling.hpp"
 #include "../headers/Menu.hpp"
@@ -9,6 +11,12 @@ using std::cin;
 class Patient:public User
 {
     public:
+    string patientID,patientName,gender,medical_history,allergies,medication,mobileNo;
+    int age;
+    Patient(){}
+    ~Patient(){}
+    Patient(string patientID,string patientName,string gender,int age,string medical_history,string allergies,string medication,string mobileNo):
+    patientID(patientID),patientName(patientName),gender(gender),age(age),medical_history(medical_history),allergies(allergies),medication(medication),mobileNo(mobileNo){}
     void home(string &);
 };
 void Patient::home(string &userid)
@@ -34,3 +42,4 @@ void Patient::home(string &userid)
         }
     }while(choice!=3);
 }
+#endif

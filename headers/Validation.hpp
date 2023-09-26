@@ -1,5 +1,5 @@
-#ifndef Validation
-    #define Validation
+#ifndef VALIDATION_HPP
+    #define VALIDATION_HPP
 #include<iostream>
 #include<ctime>
 #include<fstream>
