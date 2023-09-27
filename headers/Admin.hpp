@@ -25,7 +25,8 @@ class Admin: public User
     void displayDoctorRecords(); 
     int displaySignUpPatientsId(); 
     int displayDoctorsId(); 
-    string MobileNo(); 
+    string MobileNo();
+    string Gender();
     void loadDoctorPatientIDs(); 
      
     vector<Patient> patientRecords; //vector to store & handle patient details
@@ -154,7 +155,7 @@ void Admin::accessPatientDetails()
     }while(choice!='4'); 
 } 
 //function to add the details of the patient who Signed In
-void Admin::addPatientRecord() 
+void Admin::addPatientRecord()
 { 
     int age,i=0; 
     string ID,name,gender,medical_history,allergies,medication,mobileNo; 
@@ -183,7 +184,7 @@ void Admin::addPatientRecord()
             cout<<"Name : "; 
             getline(cin,name); 
             cout<<"Gender : ";
-            cin>>gender;
+            gender=Gender();
             cout<<"Age : "; 
             cin>>age; 
             cout<<"Medical History : "; 
@@ -231,7 +232,7 @@ void Admin::editPatientRecord()
                             getline(cin,itr->patientName); 
                             break; 
                     case 2: cout<<"Gender : ";
-                            cin>>itr->gender;
+                            itr->gender=Gender();
                             break;
                     case 3: cout<<"Age : "; 
                             cin>>itr->age; 
@@ -636,4 +637,23 @@ string Admin::MobileNo()
 void Admin::filterPatientRecords() 
 { 
      cout<<"Implementation in progress...\n";
+}
+string Admin::Gender()
+{
+    int gender;
+    selection:
+        cout<<"Select 0-Male,1-Female,2-Transgender:-\n";
+        cin>>gender;
+        if(gender==0)
+        return "Male";
+        else if(gender==1)
+        return "Female";
+        else if(gender==2)
+        return "Transgender";
+        else 
+        {
+            cout<<"Invalid selection\n";
+            goto selection;
+        }
+    return NULL;
 }

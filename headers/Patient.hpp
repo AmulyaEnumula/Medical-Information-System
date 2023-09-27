@@ -19,27 +19,36 @@ class Patient:public User
     patientID(patientID),patientName(patientName),gender(gender),age(age),medical_history(medical_history),allergies(allergies),medication(medication),mobileNo(mobileNo){}
     void home(string &);
 };
-void Patient::home(string &userid)
+void Patient::home(string &userId)
 {
-    cout<<"\t\t*** Welcome "<<userid<<" ***"<<std::endl;
-    patient_Menu();
+    cout<<"\t\t*** Welcome "<<userId<<" ***"<<std::endl;
     Appointment appointment;
     int choice;
-    do
+    try
     {
-        cout<<"Input your choice:";
-        cin>>choice;
-        switch(choice)
+        do
         {
-            case 1: appointment.bookingAppointment(userid);
-                    break;
-            case 2: appointment.viewAppointment(userid);
-                    break;
-            case 3: cout<<"Logging out...\nLogout Successful!!!\n";
-                    break;
-            default: 
-                    cout<<"Enter option from drop down Menu\n";
-        }
-    }while(choice!=3);
+            patient_Menu();
+            cout<<"-------------------------------------------------------------------------------------------------\n";
+            cout<<"Input your choice:";
+            cin>>choice;
+            cout<<"\n";
+            switch(choice)
+            {
+                case 1: appointment.bookingAppointment(userId);
+                        break;
+                case 2: appointment.viewAppointment(userId,"patient");
+                        break;
+                case 3: cout<<"Logging out...\nLogout Successful!!!\n";
+                        break;
+                default: 
+                        cout<<"Invalid choice....Enter any option from 1-3 given in drop down Menu\n";
+            }
+        }while(choice!=3);
+    }
+    catch(std::exception &e)
+    {
+        cout<<e.what()<<"\n";
+    }
 }
 #endif
